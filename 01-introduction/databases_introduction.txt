@@ -1,0 +1,123 @@
+1. What data types do each of these values represent?
+
+"A Clockwork Orange" - Text/String
+42 - Integer
+09/02/1945 - Date
+98.7 - Float
+$15.99 - Currency/Float
+
+2. Explain in your own words when a database might be used. Explain when a text file might be used.
+
+A database is used whenever data within an application needs to be stored for later use & to be 
+retrieved or manipulated throughout the lifecycle of that application and beyond. A text file 
+might be used when you just need to store some simple data that is human readable.
+
+3. Describe one difference between SQL and other programming languages.
+
+Due to the fact that SQL is a declarative language, we don’t have to define algorithms in order to 
+work with the database. We simply write a declarative statement, or query, and the database 
+determines the most efficient way to return the queried data. Also, interestingly, SQL uses a 
+single = to check for equality, instead of == as in most other programming languages.
+
+4. In your own words, explain how the pieces of a database system fit together at a high level.
+
+Using databases allows us to store, retrieve and manipulate data through an interface throughout the 
+lifecycle of an application and beyond. Through the persistent nature of databases, it allows us to 
+manipulate and add to this data over time. By using databases, it allows us to categorize data based 
+upon it’s theme i.e movie times, user profile info, and keep them organized using columns and rows. 
+Using columns and rows helps to provide us with context for the values contained in each cell of the table.
+
+5. Explain the meaning of table, row, column, and value.
+
+-> The table is the overall structure of the data, it is essentially the ‘housing’ for the rows/columns 
+of data and usually represents the overall ‘theme’ of the data. i.e Users, Customers, Movies etc.
+
+-> A row represents one complete unit of data, this could be a purchase, or a user profile, but the row 
+represents all the necessary values associated with that one unit of data.
+
+-> A column is the vertical structure of the table, which provides context, via use of labels, as to what 
+all the data in each vertical column represents. 
+
+-> A value, or essentially a ‘cell’ of the table, represents one specific value from the table where a row 
+and column intersect. Due to this intersection it will give the value context by not only showing which 
+category, but also which id it belongs to.
+
+6. List 3 data types that can be used in a table.
+
+Strings, Integer, Float
+
+7. Given this payments table, provide an English description of the following queries and include their results:
+
+     SELECT date, amount
+     FROM payments;
+
+This query is simply asking to select & return all the data values stored in both the date AND amount columns 
+from the payments table. This would yield the following results: 
+
+date	amount
+2016-05-01	1500
+2016-05-10	37
+2016-05-15	124.93
+2016-05-23	54.72
+
+———————————————————————————————————————
+
+     SELECT amount
+     FROM payments
+     WHERE amount > 500;
+
+This query is asking to select & return all the values from the amount column within the payments table, but 
+only where the amount value is greater than 500. This would yield the following results: 
+
+amount
+1500
+
+———————————————————————————————————————
+
+     SELECT *
+     FROM payments
+     WHERE payee = 'Mega Foods';
+
+This query is asking to select & return all the value within that specific row (using the * operator to select 
+all the columns in that row), where the value of payee is equal to ‘Mega Foods’. This would yield the following results: 
+
+date	payee	amount	memo
+2016-05-15	Mega Foods	124.93	Groceries
+
+———————————————————————————————————————
+
+
+8. Given this users table, write SQL queries using the following criteria and include the output:
+
+The email and sign-up date for the user named DeAndre Data.
+
+SELECT email, signup
+FROM users
+WHERE name = 'DeAndre Data';
+
+email	signup
+datad@comcast.net	2008-01-20
+
+———————————————————————————————————————
+
+
+The user ID for the user with email 'aleesia.algorithm@uw.edu'.
+
+SELECT userid
+FROM users
+WHERE email = 'aleesia.algorithm@uw.edu';
+
+userid
+1
+
+———————————————————————————————————————
+
+All the columns for the user ID equal to 4.
+
+SELECT *
+FROM users
+WHERE userid = 4;
+
+userid	name	email	signup
+4	Brandy Boolean	bboolean@nasa.gov	1999-10-15
+
