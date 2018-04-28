@@ -1,0 +1,222 @@
+1. List 5 aggregate functions and explain, in your own words, what they are for. Include a real world 
+example for each. If you can’t list these from memory, do these flashcards until you can!
+
+SUM - For calculating the sum of all data in a certain column/query. 
+e.g. To calculate the total value (sum) of available products left in an inventory.
+AVG - To calculate the average value of data in a column/query. 
+e.g. To calculate the average age of a group of cats. 
+MIN - To find the minimum data value in a column/query.
+e.g. To find the product with the lowest price in an inventory.
+MAX - To find the maxiumum data value in a column/query
+e.g. To find the student with the best exam result.
+COUNT - Provides the overall total number of data rows/items in a specific column/query.
+e.g. To count how many users have signed up. 
+
+2. Given this donations table, write queries and include the output for the following:
+
+The total of all donations received in the past year.
+
+SELECT SUM(amount) FROM donations;
+
+| sum |
+|-----|
+| 993 |
+----------------------------------------------------------
+The total donations over time per donor (e.g. if Tanysha has donated 3 times with the amounts $25, $30, and $50, then the result would be | Tanysha | 105 |).
+
+SELECT SUM(amount) AS total_per_donor, donor FROM donations GROUP BY donor;
+
+| total_per_donor |      donor |
+|-----------------|------------|
+|              20 |    Samwell |
+|              10 |     Daario |
+|              75 |    Brienne |
+|             120 |     Tyrion |
+|              70 |      Petyr |
+|              45 | Melisandre |
+|              25 |       Bran |
+|              50 |    Tormund |
+|              30 |    Ygritte |
+|               7 |      Gilly |
+|              25 |        Jon |
+|              60 |       Arya |
+|              20 |      Theon |
+|              20 |      Bronn |
+|             120 |   Margaery |
+|              90 |  Missandei |
+|              33 |      Sansa |
+|             173 |   Daenerys |
+----------------------------------------------------------
+The average donation per donor.
+
+# For all donors?
+SELECT AVG(amount) FROM donations;
+
+|               avg |
+|-------------------|
+| 36.77777777777778 |
+
+# Or for each individual donor?
+SELECT AVG(amount) AS avg_per_donor, donor FROM donations GROUP BY donor;
+
+| avg_per_donor |      donor |
+|---------------|------------|
+|            20 |    Samwell |
+|            10 |     Daario |
+|            75 |    Brienne |
+|            40 |     Tyrion |
+|            70 |      Petyr |
+|            45 | Melisandre |
+|            25 |       Bran |
+|            50 |    Tormund |
+|            30 |    Ygritte |
+|             7 |      Gilly |
+|            25 |        Jon |
+|            20 |       Arya |
+|            10 |      Theon |
+|            20 |      Bronn |
+|           120 |   Margaery |
+|          22.5 |  Missandei |
+|            33 |      Sansa |
+|          86.5 |   Daenerys |
+----------------------------------------------------------
+The number of donations over $100.
+
+SELECT COUNT(amount) FROM donations WHERE amount > 100;
+
+| count |
+|-------|
+|     2 |
+----------------------------------------------------------
+The largest donation received in a single instance from a single donor.
+
+SELECT MAX(amount) FROM donations;
+
+| max |
+|-----|
+| 120 |
+----------------------------------------------------------
+The smallest donation received.
+
+SELECT MIN(amount) FROM donations;
+
+| min |
+|-----|
+|   5 |
+
+
+3. How would you determine the display order of data returned by your SELECT statement?
+
+By using the ORDER BY keyword to sort the result in either ascending (by default) or descending
+order. e.g.
+
+SELECT AVG(amount) AS avg_per_donor, donor FROM donations GROUP BY donor ORDER BY avg_per_donor;
+
+4. What is a real world situation where you would use OFFSET?
+
+An example could be in a sports league where the first 4 automatically qualify, but the next 4
+have to go through a play-off system. By using a LIMIT 4 and OFFSET 4, it will start the results
+at the 4th item, skipping the already qualified teams, and returning the next 4 required.
+
+5. Why is it important to use ORDER BY when limiting your results?
+
+Generally speaking, when we use LIMIT, we are looking to find the limits of certain data, such as
+largest, smallest, longest, most expensive etc. If we don't use ORDER BY, it will simply return the
+first n rows of data, but due to them being essentially randomly sorted, it doesn't really serve
+any useful real world purpose. Whereas, if we use an ORDER BY when limiting, it will order our data
+first and then return relevant results based on our LIMIT.
+
+6. What is the difference between HAVING and WHERE?
+
+The WHERE clause is used to filter rows before aggregation, but WHERE is often used to
+filter groups after an aggregation has occured. The WHERE clause filters individual rows
+based upon a given condition, the HAVING clause eliminates groups of results with a single
+comparison. 
+
+7. Correct the following SELECT statement:
+
+ SELECT id, SUM (amount)
+ FROM payment
+ GROUP BY id
+ HAVING SUM (amount) > 200;
+
+
+8. Follow the instructions for the scenarios below:
+
+----------------------------------------------------------
+Given this cats table from the previous checkpoint, list all cats organized by intake date.
+
+SELECT * FROM cats ORDER BY intake_date;
+
+| id |     name | gender | age | intake_date | adoption_date |
+|----|----------|--------|-----|-------------|---------------|
+|  1 |    Mushi |      M |   1 |  2016-01-09 |    2016-03-22 |
+|  2 | Seashell |      F |   7 |  2016-01-09 |        (null) |
+|  3 |     Azul |      M |   3 |  2016-01-11 |    2016-04-17 |
+|  4 | Victoire |      M |   7 |  2016-01-11 |    2016-09-01 |
+|  5 |     Nala |      F |   1 |  2016-01-12 |        (null) |
+        
+----------------------------------------------------------
+Given this adoptions table, determine the 5 most recent adoptions to be featured for a social media promotion called "Happy Tails" which lists recent successful adoptions.
+
+SELECT * FROM adoptions ORDER BY date DESC LIMIT 5;
+
+|    id |          adopter |         cat |       date | fee |
+|-------|------------------|-------------|------------|-----|
+| 10093 | Hermione Granger | Crookshanks | 1993-08-31 |  10 |
+| 10054 |    Arabella Figg | Mr. Tibbles | 1990-02-18 |  30 |
+| 10055 |    Arabella Figg |    Mr. Paws | 1990-02-18 |  30 |
+| 10040 |    Arabella Figg |       Snowy | 1989-11-29 |  35 |
+| 10037 |    Arabella Figg |       Tufty | 1988-05-03 |  20 |
+
+----------------------------------------------------------
+There is a potential adopter looking for an adult female cat. In the most efficient way possible, list all female cats 2 or more years old from the cats table.
+
+SELECT * FROM cats WHERE age > 2 AND gender = 'F';
+
+| id |     name | gender | age | intake_date | adoption_date |
+|----|----------|--------|-----|-------------|---------------|
+|  2 | Seashell |      F |   7 |  2016-01-09 |        (null) |
+
+
+----------------------------------------------------------
+From the donations table (from problem #2), find the top 5 donors with the highest cumulative donation amounts to be honored as “Platinum Donors”.
+
+SELECT donor, SUM(amount) AS total_per_donor 
+FROM donations 
+GROUP BY donor 
+ORDER BY total_per_donor DESC 
+LIMIT 5;
+
+|     donor | total_per_donor |
+|-----------|-----------------|
+|  Daenerys |             173 |
+|  Margaery |             120 |
+|    Tyrion |             120 |
+| Missandei |              90 |
+|   Brienne |              75 |
+
+----------------------------------------------------------
+From the donations table (from problem #2), find donors 6-15 with the next highest cumulative donation amounts to be honored as “Gold Donors”.
+
+SELECT donor, SUM(amount) AS total_per_donor 
+FROM donations 
+GROUP BY donor 
+ORDER BY total_per_donor DESC 
+LIMIT 10
+OFFSET 5;
+
+|      donor | total_per_donor |
+|------------|-----------------|
+|      Petyr |              70 |
+|       Arya |              60 |
+|    Tormund |              50 |
+| Melisandre |              45 |
+|      Sansa |              33 |
+|    Ygritte |              30 |
+|        Jon |              25 |
+|       Bran |              25 |
+|    Samwell |              20 |
+|      Theon |              20 |
+
+----------------------------------------------------------
