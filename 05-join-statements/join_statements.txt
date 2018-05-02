@@ -1,0 +1,292 @@
+1. How do you find related data that is held in two separate data tables?
+
+By using a JOIN clause to output certain shared data between separate tables.
+
+----------------------------------------------------
+2. Explain, in your own words, the difference between a CROSS JOIN, INNER JOIN, LEFT OUTER JOIN, 
+RIGHT OUTER JOIN, and FULL OUTER JOIN. Give a real world example for each.
+
+INNER JOIN - An inner join, which is the SQL default, will look through both tables in the
+join query and will return a row where the JOIN query matches data in all tables.
+e.g If you wanted to output a table of 
+
+LEFT OUTER JOIN - This join method will return every row in the first table and also each
+row from the second table that matches the JOIN clause against the first table.
+e.g. If we wanted to generate a table of which employees had not returned a required document.
+
+RIGHT OUTER JOIN - The inverse of above, this join methods will return every row in the second
+table and also each matching row from the first table.
+e.g. To return a list of cats and whether they currently have foster homes. 
+
+FULL OUTER JOIN - This is a combination of the two above JOIN methods. Essentially, it will run an 
+INNER JOIN first, then it will query Table 1 and add a row where the JOIN condition is not met, and
+then do the same for Table 2, creating a row where the JOIN condition is not met. Null values will be
+placed in the adjacent columns where the JOIN condition is not met. 
+e.g. To return a table showing all employees and all job positions.
+
+CROSS JOIN - A cross join will simply output every possible combination of rows from our 
+tables.
+e.g. If we wanted to see all possible combinations of cats and foster homes.
+
+----------------------------------------------------
+3. Define primary key and foreign key. Give a real world example for each.
+
+A primary key is a unique identifier within a table, this means it can only occur once within
+a table and is used to uniquely identify that specific item of data/row in the table i.e. user id.
+A foreign key is a non-unique identifier that references the unique primary key of another table. 
+For example, within a 'comments' table of a social media app, there would be a primary key to uniquely
+identify that specific comment, but we could also include a foreign key to reference the user
+that comment belongs to. 
+
+----------------------------------------------------
+4. Define aliasing.
+
+Aliasing is the concept of substituting table names with shorter (often single letter) variables
+to help make SQL queries more concise. 
+
+----------------------------------------------------
+5. Change this query so that you are using aliasing:
+SELECT p.name, c.salary, c.vacation_days 
+FROM professor AS p
+JOIN compensation AS c
+ON p.id = c.professor_id;
+
+----------------------------------------------------
+6. Why would you use a NATURAL JOIN? Give a real world example.
+
+NATURAL is essentially the shorthand version of USING, meaning that we can implicitly use it
+without having to specify shared column names across tables. We can simply use NATURAL and it
+will form a USING list of column names that only appear in both tables. This helps keep the query
+much clearer & more concise and means we don't have to specify column names. 
+e.g. Using the idea of managing employees, we could use NATURAL to output a full table of data
+on employees that may otherwise be split across multiple tables, such as job title, department info,
+salary info, address and reporting manager. 
+
+----------------------------------------------------
+7. Using this Employee schema and data, write queries to find the following information:
+All employees with their shifts if they have any. Also include any unscheduled shifts.
+
+SELECT employees.name, shifts.date, shifts.start_time, shifts.end_time
+FROM scheduled_shifts
+RIGHT OUTER JOIN employees ON scheduled_shifts.employee_id = employees.id
+RIGHT OUTER JOIN shifts ON scheduled_shifts.shift_id = shifts.id;
+
+|             name |       date | start_time | end_time |
+|------------------|------------|------------|----------|
+| Hermione Granger | 1998-03-09 |   08:00:00 | 16:00:00 |
+| Hermione Granger | 1998-03-10 |   08:00:00 | 16:00:00 |
+| Hermione Granger | 1998-03-11 |   08:00:00 | 16:00:00 |
+| Hermione Granger | 1998-03-12 |   08:00:00 | 16:00:00 |
+| Hermione Granger | 1998-03-13 |   08:00:00 | 16:00:00 |
+|   Ronald Weasley | 1998-03-10 |   12:00:00 | 16:00:00 |
+|   Ronald Weasley | 1998-03-12 |   12:00:00 | 16:00:00 |
+|    Luna Lovegood | 1998-03-09 |   12:00:00 | 16:00:00 |
+|    Luna Lovegood | 1998-03-11 |   12:00:00 | 16:00:00 |
+|    Luna Lovegood | 1998-03-13 |   12:00:00 | 16:00:00 |
+|     Draco Malfoy | 1998-03-11 |   16:00:00 | 20:00:00 |
+|     Draco Malfoy | 1998-03-12 |   16:00:00 | 20:00:00 |
+|     Draco Malfoy | 1998-03-13 |   16:00:00 | 20:00:00 |
+|      Padma Patil | 1998-03-09 |   12:00:00 | 20:00:00 |
+|      Padma Patil | 1998-03-10 |   12:00:00 | 20:00:00 |
+|      Padma Patil | 1998-03-11 |   12:00:00 | 20:00:00 |
+|      Padma Patil | 1998-03-09 |   08:00:00 | 12:00:00 |
+|      Padma Patil | 1998-03-10 |   08:00:00 | 12:00:00 |
+|      Padma Patil | 1998-03-11 |   08:00:00 | 12:00:00 |
+|        Cho Chang | 1998-03-12 |   12:00:00 | 20:00:00 |
+|        Cho Chang | 1998-03-13 |   12:00:00 | 20:00:00 |
+|      Dean Thomas | 1998-03-09 |   16:00:00 | 20:00:00 |
+|      Dean Thomas | 1998-03-10 |   16:00:00 | 20:00:00 |
+|           (null) | 1998-03-13 |   08:00:00 | 12:00:00 |
+|           (null) | 1998-03-12 |   08:00:00 | 12:00:00 |
+
+----------------------------------------------------
+8. Using this Adoption schema and data, please write queries to retrieve the following information and include the results:
+- All volunteers. If the volunteer is fostering a dog, include each dog as well.
+
+SELECT * 
+FROM volunteers
+LEFT OUTER JOIN dogs ON volunteers.foster_dog_id = dogs.id;
+
+| id | first_name |  last_name |                    address | phone_number | available_to_foster | foster_dog_id |     id |      name | gender |    age | weight |              breed | intake_date | in_foster |
+|----|------------|------------|----------------------------|--------------|---------------------|---------------|--------|-----------|--------|--------|--------|--------------------|-------------|-----------|
+|  2 |     Rubeus |     Hagrid | 1 Edge of Forbidden Forest | 256-667-2378 |                true |         10002 |  10002 |  Munchkin |      F |      0 |      8 | dachsund chihuahua |  2017-01-13 |    (null) |
+|  5 |   Marjorie |    Dursley |  1990 Next Door to Fubster | 463-528-2253 |                true |         10006 |  10006 | Marmaduke |      M |      7 |    150 |         great dane |  2016-03-22 |    (null) |
+|  4 |     Sirius |      Black |         12 Grimmauld Place | 878-666-4663 |                true |        (null) | (null) |    (null) | (null) | (null) | (null) |             (null) |      (null) |    (null) |
+|  3 |      Remus |      Lupin |         12 Grimmauld Place | 627-283-3771 |                true |        (null) | (null) |    (null) | (null) | (null) | (null) |             (null) |      (null) |    (null) |
+|  1 |      Albus | Dumbledore |         99 Godric's Hollow | 843-746-3649 |               false |        (null) | (null) |    (null) | (null) | (null) | (null) |             (null) |      (null) |    (null) |
+
+----------------------------------------------------=
+- The cat's name, adopter's name, and adopted date for each cat adopted within the past month to be displayed as part of the "Happy Tail" social media promotion which posts recent successful adoptions.
+
+SELECT cats.name, adopters.first_name, adopters.last_name, cat_adoptions.date
+FROM cat_adoptions
+JOIN cats ON cat_adoptions.cat_id = cats.id
+JOIN adopters ON cat_adoptions.adopter_id = adopters.id
+WHERE cat_adoptions.date > CURRENT_DATE - INTERVAL '31 DAYS';
+
+|     name | first_name | last_name |       date |
+|----------|------------|-----------|------------|
+|    Mushi |   Arabella |      Figg | 2018-04-11 |
+| Victoire |      Argus |     Filch | 2018-04-16 |
+
+----------------------------------------------------
+- Adopters who have not yet chosen a dog to adopt and generate all possible combinations of adopters and available dogs.
+
+SELECT adopters.first_name, adopters.last_name, adopters.address, adopters.phone_number, dogs.name
+FROM adopters
+LEFT OUTER JOIN dog_adoptions ON dog_adoptions.adopter_id = adopters.id
+CROSS JOIN dogs
+WHERE dog_adoptions.adopter_id IS NULL;
+
+| first_name | last_name |             address | phone_number |      name |
+|------------|-----------|---------------------|--------------|-----------|
+|   Hermione |   Granger | 32 Granger's Street | 676-464-7837 |    Boujee |
+|   Arabella |      Figg |     4 Wisteria Walk | 843-228-5239 |    Boujee |
+|   Hermione |   Granger | 32 Granger's Street | 676-464-7837 |  Munchkin |
+|   Arabella |      Figg |     4 Wisteria Walk | 843-228-5239 |  Munchkin |
+|   Hermione |   Granger | 32 Granger's Street | 676-464-7837 |    Marley |
+|   Arabella |      Figg |     4 Wisteria Walk | 843-228-5239 |    Marley |
+|   Hermione |   Granger | 32 Granger's Street | 676-464-7837 |    Lassie |
+|   Arabella |      Figg |     4 Wisteria Walk | 843-228-5239 |    Lassie |
+|   Hermione |   Granger | 32 Granger's Street | 676-464-7837 | Marmaduke |
+|   Arabella |      Figg |     4 Wisteria Walk | 843-228-5239 | Marmaduke |
+|   Hermione |   Granger | 32 Granger's Street | 676-464-7837 |     Rosco |
+|   Arabella |      Figg |     4 Wisteria Walk | 843-228-5239 |     Rosco |
+
+----------------------------------------------------
+- Lists of all cats and all dogs who have not been adopted.
+
+SELECT cats.name AS cats, cats.intake_date, dogs.name AS dogs, dogs.intake_date
+FROM cats
+FULL OUTER JOIN dogs ON dogs.name = cats.name
+LEFT OUTER JOIN cat_adoptions ON cat_adoptions.cat_id = cats.id
+LEFT OUTER JOIN dog_adoptions ON dog_adoptions.dog_id = dogs.id
+WHERE cat_adoptions.date IS NULL AND dog_adoptions.date IS NULL;
+
+|     cats | intake_date |      dogs | intake_date |
+|----------|-------------|-----------|-------------|
+| Seashell |  2016-01-09 |    (null) |      (null) |
+|     Nala |  2016-01-12 |    (null) |      (null) |
+|   (null) |      (null) |  Munchkin |  2017-01-13 |
+|   (null) |      (null) |    Marley |  2017-05-04 |
+|   (null) |      (null) | Marmaduke |  2016-03-22 |
+|   (null) |      (null) |    Boujee |  2017-06-22 |
+|   (null) |      (null) |    Lassie |  2016-07-05 |
+
+----------------------------------------------------
+- Volunteers who are available to foster. If they currently are fostering a dog, include the dog. Also include all dogs who are not currently in foster homes.
+
+SELECT v.first_name, v.last_name, v.available_to_foster, dogs.name AS dog
+FROM volunteers AS v
+FULL OUTER JOIN dogs ON v.foster_dog_id = dogs.id
+WHERE v.available_to_foster IS NOT false
+ORDER BY v.first_name ASC;
+
+| first_name | last_name | available_to_foster |       dog |
+|------------|-----------|---------------------|-----------|
+|   Marjorie |   Dursley |                true | Marmaduke |
+|      Remus |     Lupin |                true |    (null) |
+|     Rubeus |    Hagrid |                true |  Munchkin |
+|     Sirius |     Black |                true |    (null) |
+|     (null) |    (null) |              (null) |    Marley |
+|     (null) |    (null) |              (null) |    Lassie |
+|     (null) |    (null) |              (null) |    Boujee |
+
+----------------------------------------------------
+- The name of the person who adopted Rosco.
+
+SELECT adopters.first_name, adopters.last_name, dogs.name
+FROM adopters
+JOIN dog_adoptions ON adopters.id = dog_adoptions.adopter_id
+JOIN dogs ON dog_adoptions.dog_id = dogs.id
+WHERE dogs.name = 'Rosco';
+
+| first_name | last_name |  name |
+|------------|-----------|-------|
+|      Argus |     Filch | Rosco |
+
+----------------------------------------------------
+9. Using this Library schema and data, write queries applying the following scenarios:
+
+- To determine if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons with a hold (request for a book with all copies checked out) on "Advanced Potion-Making".
+
+SELECT patrons.name, holds.rank
+FROM patrons
+JOIN holds ON patrons.id = holds.patron_id
+JOIN books ON holds.isbn = books.isbn
+WHERE books.title = 'Advanced Potion-Making' ORDER BY holds.rank ASC;
+
+|           name | rank |
+|----------------|------|
+|     Terry Boot |    1 |
+| Cedric Diggory |    2 |
+
+----------------------------------------------------
+- Make a list of all book titles and denote whether or not a copy of that book is checked out.
+
+SELECT books.isbn, books.title,
+  CASE
+    WHEN transactions.checked_in_date IS NULL THEN 'Checked Out.'
+    ELSE 'Checked In.'
+  END
+  AS status
+FROM books
+JOIN transactions ON transactions.isbn = books.isbn
+ORDER BY transactions.checked_in_date ASC;
+
+|       isbn |                                   title |       status |
+|------------|-----------------------------------------|--------------|
+| 1840918626 |                     Hogwarts: A History |  Checked In. |
+| 9136884926 |                  Advanced Potion-Making |  Checked In. |
+| 3458400871 | Fantastic Beasts and Where to Find Them |  Checked In. |
+| 3458400871 | Fantastic Beasts and Where to Find Them |  Checked In. |
+| 3458400871 | Fantastic Beasts and Where to Find Them |  Checked In. |
+| 9136884926 |                  Advanced Potion-Making | Checked Out. |
+| 3458400871 | Fantastic Beasts and Where to Find Them | Checked Out. |
+
+----------------------------------------------------
+- In an effort to learn which books take longer to read, the librarians would like you to create a list of total checked out time by book name in the past month.
+
+SELECT books.isbn, books.title, SUM(transactions.checked_in_date - transactions.checked_out_date) AS total_days
+FROM books
+JOIN transactions ON books.isbn = transactions.isbn
+WHERE transactions.checked_out_date > CURRENT_DATE - INTERVAL '31 DAYS' 
+AND transactions.checked_in_date IS NOT NULL
+GROUP BY books.isbn;
+
+|       isbn |                                   title | total_days |
+|------------|-----------------------------------------|------------|
+| 3458400871 | Fantastic Beasts and Where to Find Them |          5 |
+
+----------------------------------------------------
+- In order to learn which items should be retired, make a list of all books that have not been checked out in the past 5 years.
+
+SELECT books.isbn, books.title
+FROM books
+LEFT OUTER JOIN transactions ON transactions.isbn = books.isbn
+GROUP BY books.isbn, books.title
+HAVING MAX(transactions.checked_out_date) < CURRENT_DATE - INTERVAL '5 YEARS';
+
+|       isbn |               title |
+|------------|---------------------|
+| 1840918626 | Hogwarts: A History |
+
+----------------------------------------------------
+- List all of the library patrons. If they have one or more books checked out, correspond the books to the patrons.
+
+SELECT patrons.id, patrons.name, books.isbn, books.title, transactions.checked_in_date
+FROM patrons
+JOIN transactions ON patrons.id = transactions.patron_id
+JOIN books on transactions.isbn = books.isbn
+ORDER BY patrons.id ASC;
+
+| id |             name |       isbn |                                   title | checked_in_date |
+|----|------------------|------------|-----------------------------------------|-----------------|
+|  1 | Hermione Granger | 3458400871 | Fantastic Beasts and Where to Find Them |      2018-05-01 |
+|  1 | Hermione Granger | 1840918626 |                     Hogwarts: A History |      2012-05-02 |
+|  2 |       Terry Boot | 9136884926 |                  Advanced Potion-Making |          (null) |
+|  2 |       Terry Boot | 3458400871 | Fantastic Beasts and Where to Find Them |      2012-05-02 |
+|  3 |      Padma Patil | 3458400871 | Fantastic Beasts and Where to Find Them |      2018-04-28 |
+|  4 |        Cho Chang | 9136884926 |                  Advanced Potion-Making |      2012-05-02 |
+|  5 |   Cedric Diggory | 3458400871 | Fantastic Beasts and Where to Find Them |          (null) |
+
