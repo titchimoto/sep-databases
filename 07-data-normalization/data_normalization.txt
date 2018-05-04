@@ -1,0 +1,164 @@
+1. In your own words, explain the benefits of normalization. Include a real-world 
+scenario where normalization is necessary.
+
+One of the major benefits of data normalization would be to improve data integrity. 
+In a practical sense, this means eliminating as much redundant and duplicate data as 
+possible, helping to minimize bloat and keep our structure much more logically organized
+by separating dependencies across different tables and reducing data inconsistencies.
+
+By having data more logically organized it provides us with improved write/update performance
+due to the reduction in redundant data and the data being grouped in a more logical structure.
+Also, since tables are essentially being spread thinner to only include the most relevant
+data to that specific entity, it provides us with improved index creation and sorting
+due to tables having fewer columns. 
+
+A real-world example of this could be for a used car salesman, they may need a database
+to keep track of current cars, sold cars, customers, potential leads, service garages and
+much more. Data normalization would be necessary here to keep data as accurate as possible,
+and eliminating redundant and duplicate data. Within this system, there may be the potential
+for repetitive data and potential inaccuracies involved such as same car manufacturer/model 
+being purchased, same customers buying different vehicles etc. Data normalization in this case
+would help to keep the data much more logically structured and reduce inconsistencies.
+
+
+2. List and explain the different normal forms and how they relate to one another, 
+with regard to your real-world scenario in the first question.
+
+- 1st Normal Form
+
+1st Normal form simply requires that no cell within a column in the table contain multiple values, 
+and each row of data be uniquely identifiable.
+This may require us to separate a row in to two distinct rows in order to ensure that each cell
+within a column/attribute contains only one value. Or, to separate values into two separate columns.
+
+Using our above example, this could include separating both the car manufacturer and car model
+in to two separate columns, instead of one. Or, creating two rows for different contact phone
+numbers for service garages for the same garage.
+
+- 2nd Normal Form
+
+To ensure we are in 2nd normal form, first we must satisfy the conditions of 1st normal form.
+Then, in order to be in 2NF, we must ensure that all attributes (at least, non-key columns)
+must be dependent solely on the primary key and not a subset of the primary key.
+This may require us to split a table up in to multiple tables in order to satisfy this,
+as it may be that, in order for each attribute to be dependent on the primary key, we need
+to split the tables in to more logically themed groups. 
+
+Using our above example, assuming we currently have all our data stored in one table, this could 
+mean altering the structure of the table and creating a secondary table to split both the current
+cars and customers in to two separate tables. Previously, columns relating to the make/model of the 
+car did not relate to the primary key (perhaps customer name) and so should be moved to a table where
+they do describe what the primary key identifies. 
+
+- 3rd Normal Form
+
+To ensure we are in 3rd normal form, first we must satisfy the conditions of 2nd normal form.
+Then, we must ensure that all the columns within the table are dependent on the primary key,
+but are also not transitively-dependent upon ANY other column within the table. 
+
+Using our above example again, if we take our customers table that have purchased vehicles from
+our car salesman, and say we have columns customer_id(pk), name, city, zip code etc. In this example,
+city transitively depends on zip code which depends on customer_id. In order to truly be in 3NF, we 
+need to remove the column that is transitively dependent on another column, and extract that to a separate
+table. After this, each column will not rely on one another for value or context, and all be dependent on
+the primary key.
+
+Boyce Codd Normal Form
+
+Boyce Codd normal form is essentially an advanced version of 3NF. In order to be in BCNF, it first
+requires us to satisfy the conditions of 3NF, then we must ensure that for any remaining dependencies, 
+the dependent attribute must be a super key (a set of attributes that can be used to uniquely identify
+that specific data row) of the table. 
+
+
+3. This student_records table contains students and their grades in different subjects. 
+The schema is already in first normal form (1NF). Convert this schema to the third normal form (3NF) 
+using the techniques you learned in this checkpoint.
+
+CREATE TABLE students (
+  "student_id"     INTEGER,
+  "student_email"  VARCHAR(24),
+  "student_name"   VARCHAR(9),
+  
+  PRIMARY KEY ("student_id")
+);
+
+CREATE TABLE subjects (
+  "id"           INTEGER,
+  "title"        VARCHAR(20),
+  
+  PRIMARY KEY ("id")
+);
+
+CREATE TABLE professors (
+  "id"             INTEGER,
+  "professor_name" VARCHAR(9),
+  "subject_id"     INTEGER,
+  
+  PRIMARY KEY ("id"),
+  
+  FOREIGN KEY ("subject_id")
+    REFERENCES "subjects" ("id")
+);
+
+CREATE TABLE completed_classes (
+  "student_id"   INTEGER,
+  "professor_id" INTEGER,
+  "grade"        VARCHAR(1),
+  
+  FOREIGN KEY ("student_id")
+    REFERENCES "students" ("student_id"),
+  
+  FOREIGN KEY ("professor_id")
+    REFERENCES "professors" ("id")
+);
+
+4. In your own words, explain the potential disadvantages of normalizing the data above. 
+What are its trade-offs? Submit your findings in the submission table and discuss them with 
+your mentor in your next session.
+
+The first thing I'd argue as a potential disadvantage would be that it automatically introduced
+more complexity in to the table, especially for creating queries. Previously, a simple SELECT
+statement could return any data from within the table, but now to accomplish the same result, multiple
+JOIN statements would have to be correctly implemented to achieve the same results. 
+
+By introducing more complexity not only does it make it more difficult for humans to read and 
+query, but it also means that performance would be affected resulting in queries taking longer,
+which for databases with a large amount of data could make a considerable difference.
+
+However, the trade-off would be that whilst it does increase complexity and decrease performance
+somewhat, it does potentially increase write/update performance because it has minimized
+redundant columns. Also, this would help to improve data integrity and eliminate potential
+inaccuracies. 
+
+5. Looking at the tables you have normalized. If you need to denormalize to improve query 
+performance or speed up reporting, how would you carry out denormalization for this database design? 
+Submit potential strategies in the submission tab and discuss them with your mentor in your next session.
+
+Firstly, I would remove the subjects table completely, in order to remove one layer of complexity from 
+the structure. Whilst this would take us out of 3NF, it would help improve queries. It is fairly unlikely
+that a professor will teach more than one subject, so it's a safe assumption to group those together.
+
+This would improve query performance and speed up reporting, because the query would not have to 
+search through an additional table in order to return a result, removing some of the complexity it 
+may need to search through. 
+
+6. Explore the trade-offs between data normalization and denormalization in this scenario, submit your 
+findings in the submission tab, and discuss them with your mentor in your next session.
+
+[see question 4, but paraphrasing...]
+
+In this scenario, normalized data is going to improve the integrity of the data and reduce redundancy, 
+meaning that we may reduce inaccuracies in the data, reduce duplicates and improve the overall quality
+of our data. However, that is at the cost of some query performance, due to the extra tables that will 
+need to be searched in order to return a result. And also at the cost of developer performance due to the
+initial design being potentially complex to implement correctly in the first place, but also requiring
+multiple complex JOIN statements to return the required data.
+
+However, by denormalizing, whilst it may improve the potential query performance, because it simplifies 
+the table structure, it could introduce some inaccuracies in the data. For example, if we were 
+to remove the 'subject' table and include that as a value on the 'professor' table, it means that 
+we are no longer pulling from a master list of subjects, leaving some potential inaccuracies when 
+writing/updating this value across multiple professors. i.e. multiples of 'Math', 'math', 'Mathematics' etc.
+
+
